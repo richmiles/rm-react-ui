@@ -24,6 +24,7 @@ type LoginDialogProps = {
 function LoginDialog(props: LoginDialogProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState<string>(''); // added state variable for error message
     const isDisabled = !(email && password);
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const loginTooltipTitle = isDisabled ? 'Email and Password must both be filled out to login' : '';
@@ -36,46 +37,26 @@ function LoginDialog(props: LoginDialogProps) {
         setPassword(event.target.value);
     };
 
-    const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        if (isDisabled) {
-            setAnchorEl(event.currentTarget);
-        } else {
-            handleLogin();
-        }
-    };
-
-    const handlePopoverClose = () => {
-        setAnchorEl(null);
+    const handleButtonClick = (_: React.MouseEvent<HTMLButtonElement>) => {
+            handleLogin();        
     };
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const buttonElement = (
+    const loginButton = (
         <Button
             onClick={handleButtonClick}
             variant="contained"
             color="primary"
-            disabled={isDisabled}
-        >
+            disabled={isDisabled}>
             Login
         </Button>
     );
 
-    const tooltipContent = (
-        <Typography
-            sx={{ p: 2 }}
-            variant="subtitle2"
-            color="text.secondary"
-        >
-            {loginTooltipTitle}
-        </Typography>
-    );
-
-
 
     const handleLogin = () => {
-        // TODO: Implement login logic
+        setError("Invalid email or password")
     };
 
     return (
@@ -90,6 +71,7 @@ function LoginDialog(props: LoginDialogProps) {
                     type="email"
                     value={email}
                     onChange={handleEmailChange}
+                    required
                     fullWidth
                 />
                 <TextField
@@ -99,20 +81,25 @@ function LoginDialog(props: LoginDialogProps) {
                     type="password"
                     value={password}
                     onChange={handlePasswordChange}
+                    required
                     fullWidth
                 />
+                {error && (
+                    <Typography color="error" variant="subtitle2" sx={{ mt: 1 }}>
+                        {error}
+                    </Typography>
+                )}
             </DialogContent>
             <DialogActions>
                 <Button onClick={props.onClose}>Cancel</Button>
-
-                    <Tooltip
-                        title={loginTooltipTitle}
-                        placement="top"
-                    >
-                        <span>
-                            {buttonElement}
-                        </span>
-                    </Tooltip>                
+                <Tooltip
+                    title={loginTooltipTitle}
+                    placement="top"
+                >
+                    <span>
+                        {loginButton}
+                    </span>
+                </Tooltip>
             </DialogActions>
         </Dialog>
     );

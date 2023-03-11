@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
+import validator from 'validator';
 
 
 import {
@@ -23,18 +24,25 @@ type LoginDialogProps = {
 
 function LoginDialog(props: LoginDialogProps) {
     const [email, setEmail] = useState('');
+    const [isEmailValid, setIsEmailValid] = useState(true);
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string>(''); // added state variable for error message
-    const isDisabled = !(email && password);
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+    const isDisabled = !(email && password && isEmailValid);
     const loginTooltipTitle = isDisabled ? 'Email and Password must both be filled out to login' : '';
 
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(event.target.value);
+        validator.isEmail(event.target.value) ? setIsEmailValid(true) : setIsEmailValid(false);
+        
     };
 
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value);
+        if(event.target.value.length < 8) {
+            setError("Password must be at least 8 characters long")
+        } else {
+            setError("")
+        }
     };
 
     const handleButtonClick = (_: React.MouseEvent<HTMLButtonElement>) => {
@@ -73,6 +81,8 @@ function LoginDialog(props: LoginDialogProps) {
                     onChange={handleEmailChange}
                     required
                     fullWidth
+                    error={!isEmailValid} // show error if email is not valid                    
+                    helperText={!isEmailValid ? 'Please enter a valid email address' : ''} // error message
                 />
                 <TextField
                     margin="dense"

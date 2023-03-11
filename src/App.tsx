@@ -3,12 +3,10 @@ import {
   AppBar,
   Button,
   createTheme,
-  Dialog,
+  Grid,
   IconButton,
   Menu,
   MenuItem,
-  Paper,
-  TextField,
   ThemeProvider,
   Toolbar,
   Typography,
@@ -17,8 +15,9 @@ import {
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-import { styled, SxProps } from '@mui/system';
+import { styled } from '@mui/system';
 import LoginDialog from './Login';
+import RegisterForm from './RegisterForm';
 
 const theme = createTheme({
   palette: {
@@ -43,13 +42,20 @@ const LoginButton = styled(Button)(({ theme }) => ({
   marginRight: theme.spacing(2),
 }));
 
+const HeroImage = styled('img')({
+    width: "100%",
+    height: "auto",
+    maxHeight: "70vh",
+  });
+
+const HeroText = styled('div')({
+  padding: theme.spacing(6),
+});
 
 
 function App() {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [open, setOpen] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [openLogin, setOpenLogin] = useState(false);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -60,11 +66,11 @@ function App() {
   };
 
   const handleLoginClick = () => {
-    setOpen(true);
+    setOpenLogin(true);
   };
 
   const handleLoginClose = () => {
-    setOpen(false);
+    setOpenLogin(false);
   };
 
   return (
@@ -111,16 +117,32 @@ function App() {
             </Menu>
           </Toolbar>
         </AppBar>
+              <Grid container>
+        <Grid item xs={12} sm={6}>
+          <HeroImage
+            src="https://placehold.it/600x400"
+            alt="hero"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <HeroText>
+            <Typography variant="h4" gutterBottom>
+              Welcome to [Your Company Name]
+            </Typography>
+            <Typography variant="body1" paragraph>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
+              gravida sagittis nulla at ultricies. Suspendisse ac venenatis
+              elit, vel molestie justo. Suspendisse ullamcorper ipsum a
+              pulvinar.
+            </Typography>
+            <RegisterForm />
+          </HeroText>
+        </Grid>
+      </Grid>
         <LoginDialog
-          open={open}
+          open={openLogin}
           onClose={handleLoginClose}
         ></LoginDialog>
-        <Typography variant="h3" align="center" gutterBottom>
-          Welcome to My App
-        </Typography>
-        <Typography variant="body1" align="center">
-          This is my awesome app with an AppBar and a login window.
-        </Typography>
       </RootContainer>
     </ThemeProvider>
   );

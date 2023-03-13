@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
 import validator from 'validator';
@@ -11,14 +11,17 @@ import {
     DialogContent,
     DialogTitle,
     TextField,
-    Popover,
     Tooltip,
     Typography,
 } from '@mui/material';
+import axios from 'axios';
+import { AuthToken } from '../../types/AuthToken';
+import { LoginDto } from '../../types/LoginDto';
 
 type LoginDialogProps = {
     open: boolean;
     onClose: () => void;
+    setAuthToken: (token: AuthToken | null) => void;
 };
 
 
@@ -63,8 +66,21 @@ function LoginDialog(props: LoginDialogProps) {
     );
 
 
-    const handleLogin = () => {
-        setError("Invalid email or password")
+    const handleLogin = async () => {
+        var loginDto: LoginDto = {
+            email: email,
+            password: password
+        }
+        var response = await axios.post(' https://localhost:7015/api/auth/login', loginDto)
+        if(response.status !== 200) {
+            setError("Invalid email or password")
+            console.log(response.data)
+        } else {
+            var authToken: AuthToken = response.data
+            props.setAuthToken(authToken)
+            props.onClose()
+        }
+
     };
 
     return (

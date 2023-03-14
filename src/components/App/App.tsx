@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import {
   AppBar,
-  Button,
   createTheme,
-  Grid,
   IconButton,
   Menu,
   MenuItem,
@@ -15,9 +13,9 @@ import {
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import { styled } from '@mui/system';
-import LoginDialog from '../Login/LoginDialog';
-import RegistrationDialog from '../Registration/RegistrationDialog';
 import { AuthToken } from '../../types/AuthToken';
+import Home  from '../Home/Home';
+import { Route, Routes } from 'react-router-dom';
 
 const theme = createTheme({
   palette: {
@@ -42,8 +40,6 @@ const Title = styled('h1')({
 
 function App() {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [openLogin, setOpenLogin] = useState(false);
-  const [openRegistration, setOpenRegistration] = useState(false);
   const [authToken, setAuthToken] = useState<AuthToken | null>(null);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -54,41 +50,6 @@ function App() {
     setAnchorEl(null);
   };
 
-  const handleLoginClick = () => {
-    setOpenLogin(true);
-  };
-
-  const handleLoginClose = () => {
-    setOpenLogin(false);
-  };
-
-  const handleRegisterClick = () => {
-    setOpenRegistration(true);
-  };
-
-  const handleRegistrationClose = () => {
-    setOpenRegistration(false);
-  };
-
-  const loginButton = (
-    <Button
-        onClick={handleLoginClick}
-        variant="contained"       
-        color="primary" 
-        style={{margin: 10}}>
-        Login
-    </Button>
-  );
-  
-  const registerButton = (
-    <Button
-        onClick={handleRegisterClick}
-        variant="contained"
-        color="primary"
-        style={{margin: 10}}>
-        Register
-    </Button>
-  );
 
   return (
     <ThemeProvider theme={theme}>
@@ -128,20 +89,10 @@ function App() {
               </Menu></>}
           </Toolbar>
         </AppBar>
-        <Grid container justifyContent="center" alignItems="center" style={{height: "calc(100vh - 64px)", width: "100%"}} >
-            {loginButton}
-            {registerButton}
-        </Grid>
-        <LoginDialog
-          open={openLogin}
-          onClose={handleLoginClose}
-          setAuthToken={setAuthToken}
-        ></LoginDialog>
-        <RegistrationDialog
-          open={openRegistration}
-          onClose={handleRegistrationClose}
-          setAuthToken={setAuthToken}
-        />
+        <Routes>
+          <Route path="/" element={<Home setAuthToken={(token) => setAuthToken(token)} />} />
+          
+        </Routes>
       </RootContainer>
     </ThemeProvider>
   );

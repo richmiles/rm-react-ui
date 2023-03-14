@@ -16,6 +16,7 @@ import { styled } from '@mui/system';
 import { AuthToken } from '../../types/AuthToken';
 import Home  from '../Home/Home';
 import { Route, Routes } from 'react-router-dom';
+import Privacy from '../Privacy/Privacy';
 
 const theme = createTheme({
   palette: {
@@ -91,7 +92,7 @@ function App() {
         </AppBar>
         <Routes>
           <Route path="/" element={<Home setAuthToken={(token) => setAuthToken(token)} />} />
-          
+          <Route path="/privacy" element={<Privacy />} />          
         </Routes>
       </RootContainer>
     </ThemeProvider>

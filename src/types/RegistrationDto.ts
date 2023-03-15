@@ -3,6 +3,8 @@ export type RegistrationDto = {
     nameLast: string,
     email: string,
     password: string,
-    dob: string
+    dob: string,
+    privacyOptin: boolean, 
+    marketingOptin: boolean | null
 }
-// Path: src\components\registration-form.tsx
+// Path: src\components\registration-form.tsx   

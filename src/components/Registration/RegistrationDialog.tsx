@@ -42,7 +42,7 @@ function RegistrationDialog(props: RegistrationProps) {
     const [password, setPassword] = useState('')
     const [isPasswordValid, setIsPasswordValid] = useState(true)
 
-    const [dob, setDob] = useState('')
+    const [dob, setDob] = useState<Date | null>(null)
     const [isDobValid, setIsDobValid] = useState(true)
 
     const [isPrivacyOptInChecked, setIsPrivacyOptInChecked] = useState(false)
@@ -95,8 +95,13 @@ function RegistrationDialog(props: RegistrationProps) {
         }
     }
 
-    const handleDobChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setDob(event.target.value)
+
+
+    const handleDobChange = (newValue: Date) => {
+        var utcBirthDate = new Date(Date.UTC(newValue.getUTCFullYear(), newValue.getUTCMonth(), newValue.getUTCDate()))
+        setIsDobValid(true)
+        setDob(utcBirthDate)
+
     }
 
     const handleButtonClick = (_: React.MouseEvent<HTMLButtonElement>) => {
@@ -113,7 +118,7 @@ function RegistrationDialog(props: RegistrationProps) {
             nameLast: nameLast,
             email: email,
             password: password,
-            dob: dob,
+            dob: dob!,
             privacyOptin: isPrivacyOptInChecked,
             marketingOptin: isMarketingOptInChecked
 
@@ -131,7 +136,7 @@ function RegistrationDialog(props: RegistrationProps) {
 
     const isDisabled = !(
         isNameFirstValid
-        && isNameLastValid        
+        && isNameLastValid
         && isEmailValid
         && isPasswordValid
         && isDobValid
@@ -183,25 +188,31 @@ function RegistrationDialog(props: RegistrationProps) {
                     helperText={!isNameLastValid ? 'Please enter a valid last name' : ''} // error message
                 />
 
-                {isMobile ?
-                    (<MobileDatePicker
+                {isMobile ? (<MobileDatePicker
+                    label="Birthdate *"
+                    value={dob}
+                    minDate={new Date(Date.now() - 3155760000000)}
+                    maxDate={new Date(Date.now() - 568024668000)}
+                    onChange={(newValue: any) => handleDobChange(newValue)}
+                    sx={{
+                        width: '100%',
+                        marginTop: "8px",
+                        marginBottom: "4px"
+                    }}
+                />) : (
+                    <DatePicker
                         label="Birthdate *"
                         value={dob}
-                        sx={{
-                            width: '100%',
-                            marginTop: "8px",
-                            marginBottom: "4px"
-                        }}
-                    />) :
-                    (<DatePicker
-                        label="Birthdate *"
-                        value={dob}
+                        minDate={new Date(Date.now() - 3155760000000)}
+                        maxDate={new Date(Date.now() - 568024668000)}
+                        onChange={(newValue: any) => handleDobChange(newValue)}
                         sx={{
                             width: '100%',
                             marginTop: "8px",
                             marginBottom: "4px"
                         }}
                     />)}
+
 
                 <TextField
                     margin="dense"

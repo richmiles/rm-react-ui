@@ -3,7 +3,7 @@ export type RegistrationDto = {
     nameLast: string,
     email: string,
     password: string,
-    dob: string,
+    dob: Date,
     privacyOptin: boolean, 
     marketingOptin: boolean | null
 }

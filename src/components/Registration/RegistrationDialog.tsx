@@ -245,7 +245,7 @@ function RegistrationDialog(props: RegistrationProps) {
                             onChange={(e) => setIsPrivacyOptInChecked(e.target.checked)}
                         />
                     }
-                    label={<>I agree to the <MuiLink component={RouterLink} to="/privacy" target="_blank" rel="noopener noreferrer">
+                    label={<>I agree to the <MuiLink component={RouterLink} to="/privacy" tabIndex={-1} target="_blank" rel="noopener noreferrer">
                         Privacy Policy
                     </MuiLink></>}
                 />

@@ -21,8 +21,9 @@ module.exports = (env) => {
             new webpack.DefinePlugin({
                 'process.env.goal': JSON.stringify(env.goal),
                 'process.env.maintenance': JSON.stringify(env.maintenance),
-                'process.env.api_url': "https://localhost:7015",
-            }),
+                'process.env.api_url': JSON.stringify("https://localhost:7015/api"),
+                "process.env.SENTRY_DSN": JSON.stringify(process.env.SENTRY_DSN)
+            })
         ],
     }
 }

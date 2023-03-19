@@ -5,6 +5,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  styled,
   ThemeProvider,
   Toolbar,
 } from '@mui/material';
@@ -12,7 +13,6 @@ import {
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-import { styled } from '@mui/system';
 import { AuthToken } from '../../types/AuthToken';
 import Home from '../Home/Home';
 import { Route, Routes } from 'react-router-dom';
@@ -20,13 +20,16 @@ import Privacy from '../Privacy/Privacy';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
+const color_primary = "#2196f3";
+const color_secondary = "#f50057";
+
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#2196f3',
+      main: color_primary,
     },
     secondary: {
-      main: '#f50057',
+      main: color_secondary,
     },
   },
   components: {
@@ -35,17 +38,31 @@ const theme = createTheme({
         variant: 'outlined',
         size: 'small'
       }
-    }
-  }
+    },
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          textDecoration: "none",
+          color: color_primary,
+          backgroundColor: "none",
+          transition: "background-color 0.3s ease",
+          "&:hover": {
+            color: color_secondary
+          },
+        },
+      },
+    },
+  },
 });
 
+
 const RootContainer = styled('div')({
-  flexGrow: 1,
+  flexGrow: 1
 });
 
 const Title = styled('h1')({
   flexGrow: 1,
-  fontVariantCaps: 'small-caps',
+  fontVariantCaps: 'small-caps'
 });
 
 

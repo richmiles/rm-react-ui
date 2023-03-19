@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import * as Sentry from "@sentry/react";
 import { Link as RouterLink } from 'react-router-dom';
 import { Link as MuiLink } from '@mui/material';
 import { useTheme } from '@mui/material/styles'
@@ -15,12 +16,13 @@ import {
 } from '@mui/material'
 
 import { AuthToken } from '../../types/AuthToken'
-import axios from 'axios'
-import { RegistrationDto } from '../../types/RegistrationDto'
+import axios, { AxiosError } from 'axios'
+import { RegistrationDto } from './RegistrationDto'
 import validator from 'validator'
 import { DatePicker, MobileDatePicker } from '@mui/x-date-pickers'
 
 import { css } from '@emotion/react';
+import { ApiErrors } from '../../types/ApiErrors';
 
 
 export type RegistrationProps = {
@@ -109,10 +111,10 @@ function RegistrationDialog(props: RegistrationProps) {
             setError("Please agree to the privacy policy")
             return
         }
-        handleLogin()
+        handleRegister()
     }
 
-    const handleLogin = async () => {
+    const handleRegister = async () => {
         var registrationDto: RegistrationDto = {
             nameFirst: nameFirst,
             nameLast: nameLast,
@@ -123,14 +125,34 @@ function RegistrationDialog(props: RegistrationProps) {
             marketingOptin: isMarketingOptInChecked
 
         }
-        var response = await axios.post(' https://localhost:7015/api/auth/register', registrationDto)
-        if (response.status !== 200) {
-            setError("Registration Error")
-            console.log(response.data)
-        } else {
-            var authToken: AuthToken = response.data
-            props.setAuthToken(authToken)
-            props.onClose()
+        try {
+            var response = await axios.post(`${process.env.api_url}/Auth/register`, registrationDto)
+            console.log(response)
+            if (response.status !== 200) {
+                setError("Registration Error")
+                console.log(response.data)
+            } else {
+                var authToken: AuthToken = response.data
+                props.setAuthToken(authToken)
+                props.onClose()
+            }
+        } catch (error: any) {
+            error = error as AxiosError
+            console.log(error)
+            if (error.response?.status === 400) {
+                var errorData = error.response.data as ApiErrors
+                for (var errIndex in errorData) {
+                    var err = errorData[errIndex]
+                    if (err.code === "DuplicateEmail") {
+                        setError("Email already in use")
+                    }
+                }
+            } else {
+
+                setError("Something went wrong. Please try again later.")
+                Sentry.captureException(error);
+                console.error(error)
+            }
         }
     }
 
@@ -245,7 +267,7 @@ function RegistrationDialog(props: RegistrationProps) {
                             onChange={(e) => setIsPrivacyOptInChecked(e.target.checked)}
                         />
                     }
-                    label={<>I agree to the <MuiLink component={RouterLink} to="/privacy" tabIndex={-1} target="_blank" rel="noopener noreferrer">
+                    label={<>I have read and agree to the <MuiLink component={RouterLink} to="/privacy" tabIndex={-1} target="_blank" rel="noopener noreferrer">
                         Privacy Policy
                     </MuiLink></>}
                 />
@@ -256,16 +278,6 @@ function RegistrationDialog(props: RegistrationProps) {
                     label={<>Stay in the loop! By checking this box, you'll be the first to know about our latest releases and special offers.</>}
                 />
 
-                {/* <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={isPrivacyOptInChecked}
-                            onChange={(e) => setIsMarketingOptInChecked(e.target.checked)}
-                        />
-                    }
-                    label={<>Stay in the loop! By checking this box, you'll be the first to know about our latest releases and special offers.</>}
-                    sx={{ alignItems: 'flex-start', justifyContent: 'flex-start' }}
-                /> */}
                 {error && (
                     <Typography color="error" variant="subtitle2" sx={{ mt: 1 }}>
                         {error}

@@ -4,6 +4,7 @@ import { AuthToken } from '../types/AuthToken';
 import { RegistrationDto } from '../types/RegistrationDto';
 import { LoginDto } from '../types/LoginDto';
 import * as Sentry from "@sentry/react";
+import { ForgotPasswordDto } from '../types/ForgotPasswordDto';
 
 const apiClient: AxiosInstance = axios.create({
     baseURL: process.env.API_URL,
@@ -101,5 +102,16 @@ export const register = async (registrationData: RegistrationDto): Promise<AuthT
             return [{code: "500", description: "Something went wrong. Please try again later."}]
         }
     }
-
 };
+
+export const forgotPassword = async (data: ForgotPasswordDto): Promise<boolean> => {
+    try {
+        await apiClient.post('auth/forgot-password', data);
+        return true;
+    } catch (error: any) {
+        Sentry.captureException(error);
+        console.error(error)
+        return false;
+    }
+
+  };

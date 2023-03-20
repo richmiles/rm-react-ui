@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
 import validator from 'validator';
+import { Link as RouterLink } from 'react-router-dom';
+import { Link as MuiLink } from '@mui/material';
 
 
 import {
@@ -14,23 +16,24 @@ import {
     Tooltip,
     Typography,
 } from '@mui/material';
-import axios from 'axios';
+import * as ApiClient from '../../services/apiClient'
 import { AuthToken } from '../../types/AuthToken';
 import { LoginDto } from '../../types/LoginDto';
 
 type LoginDialogProps = {
-    open: boolean;
-    onClose: () => void;
-    setAuthToken: (token: AuthToken | null) => void;
+    open: boolean,
+    onClose: () => void,
+    setAuthToken: (token: AuthToken | null) => void
 };
 
 
 function LoginDialog(props: LoginDialogProps) {
+    console.log(props)
     const [email, setEmail] = useState('');
     const [isEmailValid, setIsEmailValid] = useState(true);
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string>(''); // added state variable for error message
-    const isDisabled = !(email && password && isEmailValid);
+    const isDisabled = !isEmailValid || password.length < 8;
     const loginTooltipTitle = isDisabled ? 'Email and Password must both be filled out to login' : '';
 
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,14 +74,19 @@ function LoginDialog(props: LoginDialogProps) {
             email: email,
             password: password
         }
-        var response = await axios.post(' https://localhost:7015/api/auth/login', loginDto)
-        if(response.status !== 200) {
-            setError("Invalid email or password")
-            console.log(response.data)
-        } else {
-            var authToken: AuthToken = response.data
+        var response = await ApiClient.login(loginDto)
+        if (response.hasOwnProperty("token")) {
+            var authToken: AuthToken = response as AuthToken
             props.setAuthToken(authToken)
             props.onClose()
+            return
+        } else {
+            var errorData = response as ApiErrors
+            for (var errIndex in errorData) {
+                var err = errorData[errIndex]
+                setError(err.description)
+                break;
+            }
         }
 
     };
@@ -89,6 +97,7 @@ function LoginDialog(props: LoginDialogProps) {
             <DialogContent>
                 <TextField
                     autoFocus
+                    autoComplete='email'
                     margin="dense"
                     id="email"
                     label="Email Address"
@@ -110,6 +119,7 @@ function LoginDialog(props: LoginDialogProps) {
                     required
                     fullWidth
                 />
+                <MuiLink component={RouterLink} to="/forgot-password">Forgot Password</MuiLink>
                 {error && (
                     <Typography color="error" variant="subtitle2" sx={{ mt: 1 }}>
                         {error}

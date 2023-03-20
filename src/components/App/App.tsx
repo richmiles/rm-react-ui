@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react'
 import {
   AppBar,
   createTheme,
@@ -10,29 +10,44 @@ import {
   Switch,
   ThemeProvider,
   Toolbar,
-} from '@mui/material';
+} from '@mui/material'
 
 
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 
-import { AuthToken } from '../../types/AuthToken';
-import Home from '../Home/Home';
-import { Route, Routes } from 'react-router-dom';
-import Privacy from '../Privacy/Privacy';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AuthToken } from '../../types/AuthToken'
+import Home from '../Home/Home'
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import Privacy from '../Privacy/Privacy'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+import ForgotPassword from '../Login/ForgotPassword'
 
-const color_primary = "#005f86";
-const color_secondary = "#d9e7ed";
-const color_white = "#fff";
+
+const color_primary = "#005f86"
+const color_secondary = "#d9e7ed"
+const color_white = "#fff"
 const color_light = "#ddd"
 const color_dark = "#333"
 
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [authToken, setAuthToken] = useState<AuthToken | null>(null);
+  const [darkMode, setDarkMode] = useState(false)
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const [authToken, setAuthToken] = useState<AuthToken | null>(null)
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false)
+  const location = useLocation()
+  const navigate = useNavigate();
+
+
+  useEffect(() => {
+    if (location.pathname === '/forgot-password') {
+      setForgotPasswordOpen(true)
+    } else {
+      setForgotPasswordOpen(false)
+    }
+  }, [location.pathname])
+
 
   const theme = createTheme({
     palette: {
@@ -86,31 +101,42 @@ function App() {
         },
       },
     },
-  });
+  })
 
   const RootContainer = styled('div')({
     flexGrow: 1,
     backgroundColor: theme.palette.background.default
-  });
+  })
 
   const Title = styled('h1')({
     flexGrow: 1,
     fontVariantCaps: 'small-caps',
     color: color_white
-  });
+  })
 
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+    setAnchorEl(event.currentTarget)
+  }
 
   const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
 
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
+    setDarkMode(!darkMode)
+  }
+
+  const openForgotPassword = () => {
+    setForgotPasswordOpen(true)
+  }
+
+  const closeForgotPassword = () => {
+    setForgotPasswordOpen(false)
+    navigate('/');
+    
+  }
+
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -172,13 +198,17 @@ function App() {
             </Toolbar>
           </AppBar>
           <Routes>
-            <Route path="/" element={<Home setAuthToken={(token) => setAuthToken(token)} />} />
+            <Route path="/" element={<Home
+              setAuthToken={setAuthToken}
+            />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/forgot-password" element={<ForgotPassword open={forgotPasswordOpen} handleClose={closeForgotPassword} />}
+            />
           </Routes>
         </RootContainer>
       </ThemeProvider>
     </LocalizationProvider>
-  );
+  )
 }
 
-export default App;
+export default App

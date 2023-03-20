@@ -1,28 +1,32 @@
-import { Button, Grid } from "@mui/material";
-import { useState } from "react";
-import { AuthToken } from "../../types/AuthToken";
-import LoginDialog from "../Login/LoginDialog";
-import RegistrationDialog from "../Registration/RegistrationDialog";
+import { Button, Grid } from "@mui/material"
+import { useState } from "react"
+import { AuthToken } from "../../types/AuthToken"
+import LoginDialog from "../Login/LoginDialog"
+import RegistrationDialog from "../Registration/RegistrationDialog"
 
-function Home(props: { setAuthToken: (authToken: AuthToken | null) => void }) {
-  const [openLogin, setOpenLogin] = useState(false);
-  const [openRegistration, setOpenRegistration] = useState(false);
+type HomeProps = {
+  setAuthToken: (token: AuthToken | null) => void
+}
+
+function Home(props: HomeProps) {
+  const [openLogin, setOpenLogin] = useState(false)
+  const [openRegistration, setOpenRegistration] = useState(false)
 
   const handleLoginClick = () => {
-    setOpenLogin(true);
-  };
+    setOpenLogin(true)
+  }
 
   const handleLoginClose = () => {
-    setOpenLogin(false);
-  };
+    setOpenLogin(false)
+  }
 
   const handleRegisterClick = () => {
-    setOpenRegistration(true);
-  };
+    setOpenRegistration(true)
+  }
 
   const handleRegistrationClose = () => {
-    setOpenRegistration(false);
-  };
+    setOpenRegistration(false)
+  }
   const loginButton = (
     <Button
       onClick={handleLoginClick}
@@ -31,7 +35,7 @@ function Home(props: { setAuthToken: (authToken: AuthToken | null) => void }) {
       style={{ margin: 10 }}>
       Login
     </Button>
-  );
+  )
 
   const registerButton = (
     <Button
@@ -41,7 +45,7 @@ function Home(props: { setAuthToken: (authToken: AuthToken | null) => void }) {
       style={{ margin: 10 }}>
       Register
     </Button>
-  );
+  )
   return(<>
     <Grid container justifyContent="center" alignItems="center" style={{ height: "calc(100vh - 64px)", width: "100%" }} >
       {loginButton}
@@ -60,4 +64,4 @@ function Home(props: { setAuthToken: (authToken: AuthToken | null) => void }) {
   </>)
 }
 
-export default Home;
+export default Home

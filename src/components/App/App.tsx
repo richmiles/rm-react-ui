@@ -2,10 +2,12 @@ import { useState } from 'react';
 import {
   AppBar,
   createTheme,
+  FormControlLabel,
   IconButton,
   Menu,
   MenuItem,
   styled,
+  Switch,
   ThemeProvider,
   Toolbar,
 } from '@mui/material';
@@ -22,68 +24,81 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const color_primary = "#005f86";
 const color_secondary = "#d9e7ed";
-const color_white = "#eee"
-const color_black = "#111"
+const color_white = "#fff";
+const color_light = "#ddd"
+const color_dark = "#333"
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: color_primary,
-    },
-    secondary: {
-      main: color_secondary,
-    },
-    background: {
-      default: color_secondary,
-      paper: color_white,
-    }
-  },
-  components: {
-    MuiTextField: {
-      defaultProps: {
-        variant: 'outlined',
-        size: 'small'
+
+function App() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [authToken, setAuthToken] = useState<AuthToken | null>(null);
+
+  const theme = createTheme({
+    palette: {
+      mode: darkMode ? "dark" : "light",
+      primary: {
+        main: color_primary,
+      },
+      secondary: {
+        main: color_secondary,
+      },
+      background: {
+        default: darkMode ? color_dark : color_light,
+        paper: darkMode ? color_dark : color_light
       }
     },
-    MuiLink: {
-      styleOverrides: {
-        root: {
-          textDecoration: "none",
-          color: color_primary,
-          backgroundColor: "none",
-          transition: "background-color 0.3s ease",
-          "&:hover": {
-            color: color_secondary
+    components: {
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: color_primary,
+            color: darkMode ? color_light : color_dark
+          },
+        },
+      },
+
+      MuiTextField: {
+        defaultProps: {
+          variant: 'outlined',
+          size: 'small'
+        }
+      },
+      MuiLink: {
+        styleOverrides: {
+          root: {
+            textDecoration: "none",
+            color: darkMode ? color_secondary : color_primary,
+            backgroundColor: "none",
+            transition: "background-color 0.3s ease",
+            "&:hover": {
+              color: darkMode ? color_primary : color_secondary,
+            },
+          },
+        },
+      },
+      MuiDialogTitle: {
+        styleOverrides: {
+          root: {
+            backgroundColor: color_primary,
+            color: color_white
           },
         },
       },
     },
-    MuiDialogTitle: {
-      styleOverrides: {
-        root: {
-          backgroundColor: color_primary,
-          color: color_white, 
-        },
-      },
-    },
-  },
-});
+  });
 
+  const RootContainer = styled('div')({
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default
+  });
 
-const RootContainer = styled('div')({
-  flexGrow: 1,
-  backgroundColor: theme.palette.background.default
-});
+  const Title = styled('h1')({
+    flexGrow: 1,
+    fontVariantCaps: 'small-caps',
+    color: color_white
+  });
 
-const Title = styled('h1')({
-  flexGrow: 1,
-  fontVariantCaps: 'small-caps'
-});
-
-
-function App() {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [authToken, setAuthToken] = useState<AuthToken | null>(null);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -93,6 +108,9 @@ function App() {
     setAnchorEl(null);
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -100,6 +118,13 @@ function App() {
         <RootContainer>
           <AppBar position="static" style={{ height: "64px" }}>
             <Toolbar>
+              <img src="logo192.png"
+                alt="Logo"
+                style={{
+                  height: "48px", // Adjust the height as needed
+                  marginRight: "16px", // Add some spacing between the logo and the title
+                }}
+              />
               <Title>
                 RM App
               </Title>
@@ -130,6 +155,19 @@ function App() {
                   <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
                   <MenuItem onClick={handleMenuClose}>My Account</MenuItem>
                   <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+                  <MenuItem>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={darkMode}
+                          onChange={toggleDarkMode}
+                          color="secondary"
+                          inputProps={{ 'aria-label': 'Toggle dark mode' }}
+                        />
+                      }
+                      label="Dark Mode"
+                    />
+                  </MenuItem>
                 </Menu></>}
             </Toolbar>
           </AppBar>

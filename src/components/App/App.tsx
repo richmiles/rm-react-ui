@@ -20,8 +20,10 @@ import Privacy from '../Privacy/Privacy';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
-const color_primary = "#2196f3";
-const color_secondary = "#f50057";
+const color_primary = "#005f86";
+const color_secondary = "#d9e7ed";
+const color_white = "#eee"
+const color_black = "#111"
 
 const theme = createTheme({
   palette: {
@@ -31,6 +33,10 @@ const theme = createTheme({
     secondary: {
       main: color_secondary,
     },
+    background: {
+      default: color_secondary,
+      paper: color_white,
+    }
   },
   components: {
     MuiTextField: {
@@ -52,12 +58,21 @@ const theme = createTheme({
         },
       },
     },
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: {
+          backgroundColor: color_primary,
+          color: color_white, 
+        },
+      },
+    },
   },
 });
 
 
 const RootContainer = styled('div')({
-  flexGrow: 1
+  flexGrow: 1,
+  backgroundColor: theme.palette.background.default
 });
 
 const Title = styled('h1')({

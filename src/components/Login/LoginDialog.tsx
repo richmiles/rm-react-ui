@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { AuthToken } from '../../types/AuthToken';
-import { LoginDto } from './LoginDto';
+import { LoginDto } from '../../types/LoginDto';
 
 type LoginDialogProps = {
     open: boolean;

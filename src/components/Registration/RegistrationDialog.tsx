@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import * as Sentry from "@sentry/react";
 import { Link as RouterLink } from 'react-router-dom';
 import { Link as MuiLink } from '@mui/material';
 import { useTheme } from '@mui/material/styles'
@@ -15,14 +14,13 @@ import {
     Typography,
 } from '@mui/material'
 
-import { AuthToken } from '../../types/AuthToken'
-import axios, { AxiosError } from 'axios'
-import { RegistrationDto } from './RegistrationDto'
+import * as ApiClient from '../../services/apiClient'
+import { RegistrationDto } from '../../types/RegistrationDto'
 import validator from 'validator'
 import { DatePicker, MobileDatePicker } from '@mui/x-date-pickers'
 
-import { css } from '@emotion/react';
 import { ApiErrors } from '../../types/ApiErrors';
+import { AuthToken } from '../../types/AuthToken';
 
 
 export type RegistrationProps = {
@@ -125,33 +123,18 @@ function RegistrationDialog(props: RegistrationProps) {
             marketingOptin: isMarketingOptInChecked
 
         }
-        try {
-            var response = await axios.post(`${process.env.api_url}/Auth/register`, registrationDto)
-            console.log(response)
-            if (response.status !== 200) {
-                setError("Registration Error")
-                console.log(response.data)
-            } else {
-                var authToken: AuthToken = response.data
-                props.setAuthToken(authToken)
-                props.onClose()
-            }
-        } catch (error: any) {
-            error = error as AxiosError
-            console.log(error)
-            if (error.response?.status === 400) {
-                var errorData = error.response.data as ApiErrors
-                for (var errIndex in errorData) {
-                    var err = errorData[errIndex]
-                    if (err.code === "DuplicateEmail") {
-                        setError("Email already in use")
-                    }
-                }
-            } else {
-
-                setError("Something went wrong. Please try again later.")
-                Sentry.captureException(error);
-                console.error(error)
+        var response = await ApiClient.register(registrationDto)
+        if (response.hasOwnProperty("token")) {
+            var authToken: AuthToken = response as AuthToken
+            props.setAuthToken(authToken)
+            props.onClose()
+            return
+        } else {
+            var errorData = response as ApiErrors
+            for (var errIndex in errorData) {
+                var err = errorData[errIndex]
+                setError(err.description)
+                break;
             }
         }
     }
@@ -184,6 +167,7 @@ function RegistrationDialog(props: RegistrationProps) {
             <DialogTitle>Register</DialogTitle>
             <DialogContent>
                 <TextField
+                    autoComplete='given-name'
                     margin="dense"
                     id="firstName"
                     label="First Name"
@@ -197,6 +181,7 @@ function RegistrationDialog(props: RegistrationProps) {
                     helperText={!isNameFirstValid ? 'Please enter a valid first name' : ''} // error message
                 />
                 <TextField
+                    autoComplete='family-name'
                     margin="dense"
                     id="lastName"
                     label="Last Name"
@@ -237,6 +222,7 @@ function RegistrationDialog(props: RegistrationProps) {
 
 
                 <TextField
+                    autoComplete='email'
                     margin="dense"
                     id="email"
                     label="Email Address"
@@ -250,6 +236,7 @@ function RegistrationDialog(props: RegistrationProps) {
                     helperText={!isEmailValid ? 'Please enter a valid email address' : ''} // error message
                 />
                 <TextField
+                    autoComplete='new-password'
                     margin="dense"
                     id="password"
                     label="Password"

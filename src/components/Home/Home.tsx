@@ -1,8 +1,8 @@
 import { Button, Grid } from "@mui/material"
 import { useState } from "react"
 import { AuthToken } from "../../types/AuthToken"
-import LoginDialog from "../Login/LoginDialog"
-import RegistrationDialog from "../Registration/RegistrationDialog"
+import LoginDialog from "../Authentication/LoginDialog"
+import RegistrationDialog from "../Authentication/RegistrationDialog"
 
 type HomeProps = {
   setAuthToken: (token: AuthToken | null) => void

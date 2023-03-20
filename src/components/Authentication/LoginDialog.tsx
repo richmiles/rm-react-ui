@@ -19,6 +19,7 @@ import {
 import * as ApiClient from '../../services/apiClient'
 import { AuthToken } from '../../types/AuthToken';
 import { LoginDto } from '../../types/LoginDto';
+import { ApiErrors } from '../../types/ApiErrors';
 
 type LoginDialogProps = {
     open: boolean,
@@ -76,12 +77,12 @@ function LoginDialog(props: LoginDialogProps) {
         }
         var response = await ApiClient.login(loginDto)
         if (response.hasOwnProperty("token")) {
-            var authToken: AuthToken = response as AuthToken
+            var authToken: AuthToken = response.data as AuthToken
             props.setAuthToken(authToken)
             props.onClose()
             return
         } else {
-            var errorData = response as ApiErrors
+            var errorData = response.data as ApiErrors
             for (var errIndex in errorData) {
                 var err = errorData[errIndex]
                 setError(err.description)

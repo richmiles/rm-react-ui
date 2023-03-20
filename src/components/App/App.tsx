@@ -21,11 +21,13 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import Privacy from '../Privacy/Privacy'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
-import ForgotPassword from '../Login/ForgotPassword'
+import ForgotPassword from '../Authentication/ForgotPassword'
+import ResetPassword from '../Authentication/ResetPassword'
 
 
 const color_primary = "#005f86"
 const color_secondary = "#d9e7ed"
+const color_link = "#005f86"
 const color_white = "#fff"
 const color_light = "#ddd"
 const color_dark = "#333"
@@ -36,15 +38,19 @@ function App() {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [authToken, setAuthToken] = useState<AuthToken | null>(null)
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false)
+  const [resetPasswordOpen, setResetPasswordOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate();
 
 
   useEffect(() => {
+    setForgotPasswordOpen(false)
+    setResetPasswordOpen(false)
+
     if (location.pathname === '/forgot-password') {
       setForgotPasswordOpen(true)
-    } else {
-      setForgotPasswordOpen(false)
+    } else if (location.pathname.startsWith('/reset-password')) {
+      setResetPasswordOpen(true)
     }
   }, [location.pathname])
 
@@ -127,14 +133,14 @@ function App() {
     setDarkMode(!darkMode)
   }
 
-  const openForgotPassword = () => {
-    setForgotPasswordOpen(true)
-  }
-
   const closeForgotPassword = () => {
     setForgotPasswordOpen(false)
     navigate('/');
-    
+  }
+
+  const closeResetPassword = () => {
+    setResetPasswordOpen(false)
+    navigate('/');
   }
 
 
@@ -202,8 +208,8 @@ function App() {
               setAuthToken={setAuthToken}
             />} />
             <Route path="/privacy" element={<Privacy />} />
-            <Route path="/forgot-password" element={<ForgotPassword open={forgotPasswordOpen} handleClose={closeForgotPassword} />}
-            />
+            <Route path="/forgot-password" element={<ForgotPassword open={forgotPasswordOpen} handleClose={closeForgotPassword} />} />
+            <Route path="/reset-password/:token" element={<ResetPassword open={resetPasswordOpen} handleClose={closeResetPassword} />} />
           </Routes>
         </RootContainer>
       </ThemeProvider>

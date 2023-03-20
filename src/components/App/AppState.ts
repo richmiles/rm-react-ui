@@ -1,4 +1,4 @@
-import { RegistrationProps } from "../Registration/RegistrationDialog";
+import { RegistrationProps } from "../Authentication/RegistrationDialog";
 
 export type AppState = {
     isAuthenticated: boolean;

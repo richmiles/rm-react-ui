@@ -10,8 +10,8 @@ type ForgotPasswordProps = {
 }
 
 const ForgotPassword = (props: ForgotPasswordProps) => {
+  
   const { open, handleClose } = props
-
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [email, setEmail] = useState('');
   const [isEmailValid, setIsEmailValid] = useState(true);

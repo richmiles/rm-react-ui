@@ -5,6 +5,7 @@ import { RegistrationDto } from '../types/RegistrationDto';
 import { LoginDto } from '../types/LoginDto';
 import * as Sentry from "@sentry/react";
 import { ForgotPasswordDto } from '../types/ForgotPasswordDto';
+import { ResetPasswordDto } from '../types/ResetPasswordDto';
 
 const apiClient: AxiosInstance = axios.create({
     baseURL: process.env.API_URL,
@@ -113,5 +114,15 @@ export const forgotPassword = async (data: ForgotPasswordDto): Promise<boolean> 
         console.error(error)
         return false;
     }
+  };
 
+  export const resetPassword = async (data: ResetPasswordDto): Promise<boolean> => {
+    try {
+        await apiClient.post('auth/reset-password', data);
+        return true;
+    } catch (error: any) {
+        Sentry.captureException(error);
+        console.error(error)
+        return false;
+    }
   };
